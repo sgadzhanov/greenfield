@@ -25,7 +25,7 @@ delete from public.walks;
 update public.walks set minutes = 5;
 
 reset role;
-select is((select count(*) from public.walks where minutes is null), 1::bigint, 'B could not delete or change A''s walk');
+select is((select count(*) from public.walks where user_id = '00000000-0000-0000-0000-00000000000a' and minutes is null), 1::bigint, 'B could not delete or change A''s walk');
 
 select * from finish();
 rollback;
