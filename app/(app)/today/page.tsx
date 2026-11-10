@@ -8,8 +8,8 @@ import { LogWalk } from './log-walk'
 // Switching months re-renders in place and keeps the old month visible meanwhile; that is intended.
 export const instant = false
 
-export default async function Today({ searchParams }: { searchParams: Promise<{ m?: string }> }) {
-  const { m } = await searchParams
+export default async function Today({ searchParams }: { searchParams: Promise<{ m?: string; welcome?: string }> }) {
+  const { m, welcome } = await searchParams
   const { profile, walks, today, hoursLeft, stats } = await fetchState()
   const thisMonth = today.slice(0, 7)
   const month = m && /^\d{4}-(0[1-9]|1[0-2])$/.test(m) && m <= thisMonth ? m : thisMonth
@@ -25,6 +25,11 @@ export default async function Today({ searchParams }: { searchParams: Promise<{ 
   return (
     <>
       <h1 className="text-2xl font-extrabold">Здравей, {profile.display_name}!</h1>
+      {welcome && (
+        <p role="status" className="pop card border-primary bg-primary/10 font-semibold text-primary">
+          🎉 Имейлът ти е потвърден – радваме се, че си тук! Отбележи първата си разходка с бутона по-долу.
+        </p>
+      )}
 
       <LogWalk streak={stats.streak} walkedToday={stats.walkedToday} note={note} />
 
