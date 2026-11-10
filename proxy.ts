@@ -25,6 +25,13 @@ export async function proxy(request: NextRequest) {
   const signedIn = Boolean(data?.claims)
   const path = request.nextUrl.pathname
 
+  // Supabase falls back to the Site URL (our "/") when a redirect is not allow-listed.
+  if (path === '/' && request.nextUrl.searchParams.has('code')) {
+    const confirm = new URL('/auth/confirm', request.url)
+    confirm.search = request.nextUrl.search
+    return NextResponse.redirect(confirm)
+  }
+
   const target =
     !signedIn && SIGNED_IN_ONLY.some((p) => path.startsWith(p)) ? '/login'
     : signedIn && SIGNED_OUT_ONLY.includes(path) ? '/today'

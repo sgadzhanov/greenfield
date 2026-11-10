@@ -1,6 +1,6 @@
 'use server'
 
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { FormState } from '@/components/form'
 import { createClient } from '@/lib/supabase/server'
@@ -16,6 +16,14 @@ const MESSAGES: Record<string, string> = {
   over_request_rate_limit: 'Твърде много опити. Изчакай малко и опитай пак.',
 }
 const message = (error: { code?: string }) => MESSAGES[error.code ?? ''] ?? 'Нещо се обърка. Опитай пак.'
+
+/** Where email links come back to: this deployment's /auth/confirm. Supabase only honours it if
+ * it matches the project's Redirect URLs allow-list, otherwise it falls back to the Site URL. */
+async function confirmUrl(next?: string) {
+  const h = await headers()
+  const origin = h.get('origin') ?? `https://${h.get('host')}`
+  return `${origin}/auth/confirm${next ? `?next=${next}` : ''}`
+}
 
 const text = (data: FormData, key: string) => String(data.get(key) ?? '').trim()
 const validEmail = (email: string) => /^\S+@\S+\.\S+$/.test(email)
@@ -36,7 +44,7 @@ export async function register(_: FormState, data: FormData): Promise<FormState>
   const { error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { display_name: name, timezone: text(data, 'timezone') } },
+    options: { emailRedirectTo: await confirmUrl(), data: { display_name: name, timezone: text(data, 'timezone') } },
   })
   if (error) return { error: message(error) }
   // Same screen whether or not the email was already registered.
@@ -48,7 +56,7 @@ export async function resend(): Promise<FormState> {
   const email = (await cookies()).get(PENDING)?.value
   if (!email) return { error: 'Не знаем на кой имейл да изпратим. Регистрирай се отново.' }
   const supabase = await createClient()
-  const { error } = await supabase.auth.resend({ type: 'signup', email })
+  const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: await confirmUrl() } })
   if (error) return { error: message(error) }
   return { ok: 'Изпратихме ти нов имейл.', at: Date.now() }
 }
@@ -57,7 +65,7 @@ export async function resendTo(_: FormState, data: FormData): Promise<FormState>
   const email = text(data, 'email')
   if (!validEmail(email)) return { error: MESSAGES.email_address_invalid }
   const supabase = await createClient()
-  const { error } = await supabase.auth.resend({ type: 'signup', email })
+  const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: await confirmUrl() } })
   if (error?.code?.startsWith('over_')) return { error: message(error) }
   return { ok: 'Ако има непотвърдена регистрация с този имейл, изпратихме нов линк.' }
 }
@@ -79,7 +87,7 @@ export async function forgotPassword(_: FormState, data: FormData): Promise<Form
   const email = text(data, 'email')
   if (!validEmail(email)) return { error: MESSAGES.email_address_invalid }
   const supabase = await createClient()
-  const { error } = await supabase.auth.resetPasswordForEmail(email)
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: await confirmUrl('/update-password') })
   if (error?.code?.startsWith('over_')) return { error: message(error) }
   return { ok: 'Ако има профил с този имейл, изпратихме линк за нова парола. Валиден е един час.' }
 }
