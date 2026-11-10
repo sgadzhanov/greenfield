@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { connection } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { computeStats, todayIn } from '@/lib/stats'
 
@@ -11,6 +12,7 @@ const PAGE = 1000 // PostgREST returns at most this many rows per request
  * and action calls this, and it redirects to login when the session is gone.
  */
 export async function fetchState() {
+  await connection() // per-request data: never prerender or cache it
   const supabase = await createClient()
   const { data } = await supabase.auth.getClaims()
   if (!data?.claims) redirect('/login')

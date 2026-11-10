@@ -36,7 +36,7 @@ export function Calendar({ month, today, walks, frozen }: { month: string; today
     <section className="card">
       <div className="mb-3 flex items-center justify-between">
         <Link href={`/today?m=${shift(month, -1)}`} scroll={false} aria-label="Предишен месец" className="btn-ghost min-h-11 px-4">‹</Link>
-        <h2 className="text-lg font-bold capitalize">{monthTitle(month)}</h2>
+        <h2 className="text-lg font-bold first-letter:uppercase">{monthTitle(month)}</h2>
         {month < today.slice(0, 7) ? (
           <Link href={`/today?m=${shift(month, 1)}`} scroll={false} aria-label="Следващ месец" className="btn-ghost min-h-11 px-4">›</Link>
         ) : (
@@ -72,7 +72,7 @@ export function Calendar({ month, today, walks, frozen }: { month: string; today
         {selected && (
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold capitalize">{dayTitle(selected)}</h3>
+              <h3 className="text-lg font-bold first-letter:uppercase">{dayTitle(selected)}</h3>
               <button className="btn-ghost min-h-11 px-4" onClick={() => sheet.current?.close()}>Затвори</button>
             </div>
 

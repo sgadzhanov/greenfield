@@ -1,8 +1,12 @@
+import { Bar } from '@/components/bar'
 import { days, plural } from '@/lib/bg'
 import { fetchState } from '@/lib/data'
 import { addDays, FREEZE_EVERY, MAX_FREEZES } from '@/lib/stats'
 import { Calendar } from './calendar'
 import { LogWalk } from './log-walk'
+
+// Switching months re-renders in place and keeps the old month visible meanwhile; that is intended.
+export const instant = false
 
 export default async function Today({ searchParams }: { searchParams: Promise<{ m?: string }> }) {
   const { m } = await searchParams
@@ -44,7 +48,7 @@ export default async function Today({ searchParams }: { searchParams: Promise<{ 
       <section className="card">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted">Предизвикателство на седмицата</p>
         <p className="mt-1 text-lg font-bold">{challenge.title}</p>
-        <progress className="mt-3 h-3 w-full accent-primary" value={challenge.progress} max={challenge.target} />
+        <Bar value={challenge.progress} max={challenge.target} label="Напредък по предизвикателството" />
         <p className="mt-1 text-sm text-muted">
           {challenge.done ? 'Изпълнено! +50 точки 🎉' : `${challenge.progress} от ${challenge.target}`}
         </p>

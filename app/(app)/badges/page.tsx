@@ -1,3 +1,4 @@
+import { Bar } from '@/components/bar'
 import { fetchState } from '@/lib/data'
 import { ShareButton } from './share'
 
@@ -16,7 +17,7 @@ export default async function Badges() {
         <p className="mt-1 text-muted">{points} точки</p>
         {level.nextAt && (
           <>
-            <progress className="mt-3 h-3 w-full accent-primary" value={points} max={level.nextAt} />
+            <Bar value={points} max={level.nextAt} label="Напредък до следващото ниво" />
             <p className="mt-1 text-sm text-muted">Още {level.nextAt - points} точки до следващото ниво</p>
           </>
         )}
