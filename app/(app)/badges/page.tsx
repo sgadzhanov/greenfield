@@ -28,8 +28,8 @@ export default async function Badges() {
       <h2 className="mt-2 text-lg font-bold">Значки · {earned} от {badges.length}</h2>
       <ul className="grid grid-cols-2 gap-3">
         {badges.map((b) => (
-          <li key={b.id} className={`card flex flex-col items-center gap-1 px-3 text-center ${b.earned ? '' : 'opacity-50'}`}>
-            <span className={`text-4xl ${b.earned ? '' : 'grayscale'}`} aria-hidden>{b.icon}</span>
+          <li key={b.id} className={`card flex flex-col items-center gap-1 px-3 text-center`}>
+            <span className={`text-4xl ${b.earned ? '' : 'opacity-40 grayscale'}`} aria-hidden>{b.icon}</span>
             <span className="font-bold">{b.title}</span>
             <span className="text-xs text-muted">{b.earned ? 'Спечелена ✓' : b.hint}</span>
           </li>

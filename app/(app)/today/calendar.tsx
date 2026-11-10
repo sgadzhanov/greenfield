@@ -33,7 +33,7 @@ export function Calendar({ month, today, walks, frozen }: { month: string; today
   const picked = selected ? onDay(selected) : []
 
   return (
-    <section className="card">
+    <section className="card px-2">
       <div className="mb-3 flex items-center justify-between">
         <Link href={`/today?m=${shift(month, -1)}`} scroll={false} aria-label="Предишен месец" className="btn-ghost min-h-11 px-4">‹</Link>
         <h2 className="text-lg font-bold first-letter:uppercase">{monthTitle(month)}</h2>
@@ -44,7 +44,7 @@ export function Calendar({ month, today, walks, frozen }: { month: string; today
         )}
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center">
+      <div className="grid grid-cols-7 gap-0.5 text-center">
         {WEEKDAYS.map((d) => <div key={d} className="py-1 text-xs font-semibold text-muted">{d}</div>)}
         {Array.from({ length: weekday(first) }, (_, i) => <div key={i} />)}
         {cells.map((day) => {
@@ -68,11 +68,11 @@ export function Calendar({ month, today, walks, frozen }: { month: string; today
         })}
       </div>
 
-      <dialog ref={sheet} className="sheet" onClose={() => setSelected(null)}>
+      <dialog ref={sheet} aria-labelledby="day-title" className="sheet" onClose={() => setSelected(null)}>
         {selected && (
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold first-letter:uppercase">{dayTitle(selected)}</h3>
+              <h3 id="day-title" className="text-lg font-bold first-letter:uppercase">{dayTitle(selected)}</h3>
               <button className="btn-ghost min-h-11 px-4" onClick={() => sheet.current?.close()}>Затвори</button>
             </div>
 
@@ -84,7 +84,7 @@ export function Calendar({ month, today, walks, frozen }: { month: string; today
                   <Details walk={walk} />
                 </Form>
                 <div className="mt-2">
-                  <Form action={deleteWalk} submit="Изтрий разходката" className="min-h-11 text-sm font-semibold text-danger">
+                  <Form action={deleteWalk} submit="Изтрий разходката" confirm="Да изтрия ли тази разходка?" className="min-h-11 text-sm font-semibold text-danger">
                     <input type="hidden" name="id" value={walk.id} />
                   </Form>
                 </div>

@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
   if (token_hash && type) {
     const supabase = await createClient()
     const { error } = await supabase.auth.verifyOtp({ type, token_hash })
-    // Only same-site paths, never an absolute or protocol-relative URL.
-    if (!error) redirect(/^\/[^/\\]/.test(next) ? next : '/today')
+    // Allow-list, so the link can never send anyone off-site.
+    if (!error) redirect(next === '/update-password' ? next : '/today')
   }
   redirect('/auth/error')
 }

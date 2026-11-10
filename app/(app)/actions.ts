@@ -45,12 +45,12 @@ export async function logWalk(_: FormState, data: FormData): Promise<FormState> 
 
   const { error } = await before.supabase.from('walks').insert({ walked_on: day, ...fields })
   if (error) return FAIL
+  revalidatePath('/', 'layout')
 
   const after = await state()
   if (!after) return { ok: 'Записано!' }
   const had = new Set(before.stats.badges.filter((b) => b.earned).map((b) => b.id))
   const earned = after.stats.badges.filter((b) => b.earned && !had.has(b.id)).map((b) => `${b.icon} ${b.title}`)
-  revalidatePath('/', 'layout')
   return { ok: 'Записано!', at: Date.now(), earned }
 }
 

@@ -14,7 +14,8 @@ const PAGE = 1000 // PostgREST returns at most this many rows per request
 export async function fetchState() {
   await connection() // per-request data: never prerender or cache it
   const supabase = await createClient()
-  const { data } = await supabase.auth.getClaims()
+  const { data, error } = await supabase.auth.getClaims()
+  if (error?.name === 'AuthRetryableFetchError') throw new Error('auth backend unreachable')
   if (!data?.claims) redirect('/login')
 
   const { data: profile } = await supabase.from('profiles').select('display_name, timezone').single()

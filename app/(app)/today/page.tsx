@@ -26,7 +26,7 @@ export default async function Today({ searchParams }: { searchParams: Promise<{ 
     <>
       <h1 className="text-2xl font-extrabold">Здравей, {profile.display_name}!</h1>
 
-      <LogWalk today={today} streak={stats.streak} walkedToday={stats.walkedToday} note={note} />
+      <LogWalk streak={stats.streak} walkedToday={stats.walkedToday} note={note} />
 
       <section className="grid grid-cols-3 gap-3 text-center">
         {[

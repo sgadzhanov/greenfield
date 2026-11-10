@@ -70,8 +70,8 @@ export async function login(_: FormState, data: FormData): Promise<FormState> {
     await rememberPending(email)
     redirect('/check-email')
   }
-  if (error?.code?.startsWith('over_')) return { error: message(error) }
-  if (error) return { error: 'Невалиден имейл или парола.' }
+  if (error?.code === 'invalid_credentials') return { error: 'Невалиден имейл или парола.' }
+  if (error) return { error: message(error) }
   redirect('/today')
 }
 

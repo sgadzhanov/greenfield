@@ -1,15 +1,18 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export function ShareButton() {
+  const router = useRouter()
   const [state, setState] = useState<'idle' | 'busy' | 'failed'>('idle')
 
   async function share() {
     setState('busy')
     try {
       const res = await fetch('/share/card')
-      if (!res.ok) throw new Error(String(res.status))
+      if (res.redirected) return router.push('/login') // session expired
+      if (!res.ok || !res.headers.get('content-type')?.startsWith('image/')) throw new Error(String(res.status))
       const file = new File([await res.blob()], 'razhodki.png', { type: 'image/png' })
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], title: 'Разходки' }).catch(() => {}) // user closed the sheet

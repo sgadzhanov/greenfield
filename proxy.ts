@@ -20,7 +20,8 @@ export async function proxy(request: NextRequest) {
   })
 
   // Refreshes an expired session and verifies the token. Do not remove.
-  const { data } = await supabase.auth.getClaims()
+  const { data, error } = await supabase.auth.getClaims()
+  if (error?.name === 'AuthRetryableFetchError') return response // backend unreachable: not a logout
   const signedIn = Boolean(data?.claims)
   const path = request.nextUrl.pathname
 

@@ -5,11 +5,12 @@ import { useActionState } from 'react'
 export type FormState = { error?: string; ok?: string; at?: number; earned?: string[] } | null
 export type FormAction = (prev: FormState, data: FormData) => Promise<FormState>
 
-export function Form({ action, submit, children, className = 'btn' }: {
+export function Form({ action, submit, children, className = 'btn', confirm }: {
   action: FormAction
   submit: string
   children?: React.ReactNode
   className?: string
+  confirm?: string
 }) {
   const [state, formAction, pending] = useActionState(action, null)
   return (
@@ -18,6 +19,7 @@ export function Form({ action, submit, children, className = 'btn' }: {
         data.set('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone)
         formAction(data)
       }}
+      onSubmit={(event) => { if (confirm && !window.confirm(confirm)) event.preventDefault() }}
       className="flex flex-col gap-4"
     >
       {children}

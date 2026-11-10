@@ -23,6 +23,10 @@ create policy "own profile read" on public.profiles for select to authenticated
 create policy "own profile update" on public.profiles for update to authenticated
   using (id = (select auth.uid())) with check (id = (select auth.uid()));
 
+-- Users may change their name only; timezone is set once at signup.
+revoke update on public.profiles from authenticated;
+grant update (display_name) on public.profiles to authenticated;
+
 -- +1 day of slack: the server clock is UTC, users are ahead of it.
 create policy "own walks" on public.walks for all to authenticated
   using (user_id = (select auth.uid()))
