@@ -1,26 +1,92 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f7f3ec;
+  --card: #ffffff;
+  --ink: #1d2a22;
+  --muted: #66736b;
+  --line: #e4ddd0;
+  --primary: #2c7a4b;
+  --primary-ink: #ffffff;
+  --flame: #e8771a;
+  --ice: #2b8fc7;
+  --danger: #b3261e;
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #111613;
+    --card: #1a221d;
+    --ink: #eef2ee;
+    --muted: #9aa69e;
+    --line: #2b362f;
+    --primary: #4fb37a;
+    --primary-ink: #0c1a11;
+    --flame: #ff9a3d;
+    --ice: #6cc0f0;
+    --danger: #ff8a80;
   }
 }
 
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-flame: var(--flame);
+  --color-ice: var(--ice);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-app), system-ui, sans-serif;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  color-scheme: light dark;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex min-h-12 items-center justify-center rounded-2xl bg-primary px-5 font-semibold text-primary-ink transition active:scale-[0.98] disabled:opacity-60;
+  }
+  .btn-ghost {
+    @apply inline-flex min-h-12 items-center justify-center rounded-2xl border border-line bg-card px-5 font-semibold text-ink active:scale-[0.98] disabled:opacity-60;
+  }
+  .input {
+    @apply min-h-12 w-full rounded-xl border border-line bg-card px-4 text-base text-ink outline-none focus:border-primary focus:ring-2 focus:ring-primary/30;
+  }
+  .card {
+    @apply rounded-3xl border border-line bg-card p-5;
+  }
+  .label {
+    @apply mb-1 block text-sm font-medium text-muted;
+  }
+}
+
+dialog.sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 32rem;
+  max-height: 85dvh;
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: var(--card);
+  color: var(--ink);
+  padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+}
+dialog.sheet::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.pop { animation: pop 0.45s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .pop { animation: none; }
+  * { transition: none !important; }
 }
